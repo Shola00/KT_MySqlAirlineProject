@@ -1,0 +1,190 @@
+-- update ticket set Date_Of_Purchases = STR_To_DATE(Date_Of_Purchases, '%m/%d/%Y');
+
+--question 1. The airline with the most expensive first class tickets (on average) over the 3 years
+
+select a.airline_name, t.single_ticket_purchase_price from airline a, ticket t
+where a.id = t.airline_id
+order by single_ticket_purchase_price desc limit 1;
++-----------------+------------------------------+
+| airline_name    | single_ticket_purchase_price |
++-----------------+------------------------------+
+| British Airways | 9996                         |
++-----------------+------------------------------+
+
+--question 2. The airline with the cheapest first class tickets (on average) in 2016
+
+select t.Date_Of_Purchases, a.airline_name, t.single_ticket_purchase_price
+from airline a, ticket t
+WHERE a.id = t.airline_id and single_ticket_purchase_price >=4590 AND single_ticket_purchase_price <=10000 and Date_Of_Purchases BETWEEN '2016-01-01' AND '2016-12-31'
+order by single_ticket_purchase_price
+limit 1;
++-------------------+-----------------+------------------------------+
+| Date_Of_Purchases | airline_name    | single_ticket_purchase_price |
++-------------------+-----------------+------------------------------+
+| 2016-01-25        | Virgin Atlantic | 4605                         |
++-------------------+-----------------+------------------------------+
+
+--question 3. The cheapest ticket for business class between 14/02/2016 and 21/11/2016
+
+select t.Date_Of_Purchases, a.airline_name, t.single_ticket_purchase_price
+from airline a, ticket t
+WHERE a.id = t.airline_id and single_ticket_purchase_price >=1046 AND single_ticket_purchase_price <=5800 and Date_Of_Purchases
+BETWEEN '2016-02-14' AND '2016-11-21'
+order by single_ticket_purchase_price
+limit 1;
++-------------------+--------------+------------------------------+
+| Date_Of_Purchases | airline_name | single_ticket_purchase_price |
++-------------------+--------------+------------------------------+
+| 2016-06-24        | Emirates     | 1052                         |
++-------------------+--------------+------------------------------+
+
+--question 4. The total amount of money that Virgin Atlantic has made from Economy ticket purchases in the first quarter of the year of 2017.
+
+ select a.airline_Name, Sum(t.single_ticket_purchase_price) as "total amount made from economy ticket"
+ from airline a, ticket t
+ where a.id = 6 and single_ticket_purchase_price >=515 and single_ticket_purchase_price <=1481 and Date_Of_Purchases
+ between '2017-01-01' AND '2017-03-31';
++-----------------+---------------------------------------+
+| airline_Name    | total amount made from economy ticket |
++-----------------+---------------------------------------+
+| Virgin Atlantic |                                  7749 |
++-----------------+---------------------------------------+
+
+--question 5. The most profitable airline last year (2017).
+
+select sum(t.single_ticket_purchase_price) as "Total_amount_earned", a.airline_name from Airline a, ticket t
+where a.id = t.Airline_id and Date_Of_Purchases BETWEEN '2017-01-01' AND '2017-12-31'
+Group by a.id
+Order by sum(t.single_ticket_purchase_price) desc
+limit 1;
++---------------------+--------------+
+| Total_amount_earned | airline_name |
++---------------------+--------------+
+|              524994 | Emirates     |
++---------------------+--------------+
+
+--question 6. The top 3 most profitable airlines last year (2017).
+
+select sum(t.single_ticket_purchase_price) as "Total_amount_earned", a.airline_name from Airline a, ticket t
+where a.id = t.Airline_id and Date_Of_Purchases BETWEEN '2017-01-01' AND '2017-12-31'
+Group by a.id
+Order by sum(t.single_ticket_purchase_price) desc
+limit 3;
++---------------------+-----------------+
+| Total_amount_earned | airline_name    |
++---------------------+-----------------+
+|              524994 | Emirates        |
+|              482371 | KLM             |
+|              444843 | British Airways |
++---------------------+-----------------+
+
+--7. The most used airline in last year (2017).
+
+select count(t.Airline_id) as "number_of_trips", a.airline_name
+from Airline a, ticket t
+where a.id = t.airline_id and Date_Of_Purchases BETWEEN '2017-01-01' AND '2017-12-31'
+Group by a.id
+Order by count(t.single_ticket_purchase_price) desc
+limit 1;
++-----------------+--------------+
+| number_of_trips | airline_name |
++-----------------+--------------+
+|              92 | Emirates     |
++-----------------+--------------+
+
+--8. The most travelled to country in the world last year for British Airways (2017).
+
+select count(t.single_ticket_purchase_price) as "number_of_trips", a.airline_name
+from Airline a, ticket t
+where a.id = t.airline_id and Date_Of_Purchases BETWEEN '2017-01-01' AND '2017-12-31'
+Group by a.id
+Order by count(t.single_ticket_purchase_price) desc
+limit 1;
+
+--9. The airline with the last/final flight of last year (2017).
+
+select t.Date_Of_Purchases as "flight_date", a.airline_name
+from Airline a, ticket t
+where a.id = t.airline_id and Date_Of_Purchases BETWEEN '2017-01-01' AND '2017-12-31'
+Order by t.Date_Of_Purchases desc limit 2;
++-------------+--------------+
+| flight_date | airline_name |
++-------------+--------------+
+| 2017-12-31  | Lufthansa    |
+| 2017-12-31  | KLM          |
++-------------+--------------+
+
+--10. The most loyal customer/frequent flier for each airline (in one table) in 2017.
+
+select p.First_Name, p.Last_Name, a.airline_name
+from Passenger p, airline a, ticket t
+where p.id = t.Passenger_Id and Date_Of_Purchases BETWEEN '2017-01-01' AND '2017-12-31'
+Order by a.airline_name desc;
+
+--11. The number of trips made to each country by each airline to each country.
+
+select a.airlin_name, c.Country_Name
+
+
+select count(t.id) as "number_of_trips", a.id, t.Destination_Country
+from Airline a, ticket t
+join Country on t.Destination_Country=c.Country_Name
+where a.id=2, t.Destination_Country=c.id, and Date_Of_Purchases like '%2017%'
+Group by  t.Destination_Country
+Order by count(t.id) desc;
+
++-----------------+----+---------------------+
+| number_of_trips | id | Destination_Country |
++-----------------+----+---------------------+
+|               5 |  2 | 220                 |
+|               5 |  2 | 214                 |
+|               5 |  2 | 310                 |
+
+
+--16. Which airline sold the most expensive business class tickets to customer in 2017
+
+select t.airline_id, a.airline_name, t.single_ticket_purchase_price
+from airline a, ticket t
+where a.id = t.airline_id and single_ticket_purchase_price >=1046 and single_ticket_purchase_price <=5800 and Date_Of_Purchases
+BETWEEN '2017-01-01' AND '2017-12-31' order by single_ticket_purchase_price desc limit 1;
+
++------------+--------------+------------------------------+
+| airline_id | airline_name | single_ticket_purchase_price |
++------------+--------------+------------------------------+
+| 1          | Arik Air     | 5790                         |
++------------+--------------+------------------------------+
+
+--17. The total amount of money each customer has spent on airline travel since the system was created.
+
+select p.first_name, p.last_name, sum(single_ticket_purchase_price)
+from passenger p, ticket t
+where p.id = t.passenger_id
+group by passenger_id;
++------------+-----------+-----------------------------------+
+| first_name | last_name | sum(single_ticket_purchase_price) |
++------------+-----------+-----------------------------------+
+| Thane      | Douglas   |                            254246 |
+| Seth       | Mills     |                            192652 |
+| Elliott    | Hodge     |                            214428 |
+| Raymond    | Peters    |                            244992 |
+| Madison    | Mcclure   |                            213309 |
+| Alexander  | Shaffer   |                            205315 |
+| Stephen    | Quinn     |                            253046 |
+| Kirsten    | Benjamin  |                            212708 |
+| Sopoline   | Crane     |                            199350 |
+| Clarke     | Sullivan  |                            286426 |
+| Kasper     | Perry     |                            160709 |
+| Lionel     | Solomon   |                            192396 |
+| Murphy     | Guzman    |                            201064 |
+| Darius     | Bird      |                            221663 |
+| Wylie      | Greene    |                            258242 |
+| Eagan      | Malone    |                            220804 |
+| Wayne      | Mayer     |                            175357 |
+| Plato      | Dyer      |                            226673 |
+| Joshua     | Lewis     |                            185365 |
+| Marvin     | Wright    |                            231893 |
+| Nigel      | Hunter    |                            217859 |
+| Aretha     | Bauer     |                            214698 |
+| Hedley     | Chaney    |                            220953 |
+| Brielle    | Jennings  |                            270302 |
++------------+-----------+-----------------------------------+
